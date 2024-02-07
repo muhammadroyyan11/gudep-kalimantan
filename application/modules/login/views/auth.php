@@ -80,6 +80,45 @@
             /* Warna teks saat hover */
         }
 
+        input[type="button"],
+        input[type="submit"] {
+            cursor: pointer;
+            background: linear-gradient(to right, #1E90FF, #87CEEB);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        /* Warna default untuk hover */
+        input[type="button"]:hover,
+        input[type="submit"]:hover {
+            background: linear-gradient(to right, #87CEEB, #1E90FF);
+            color: #1E90FF;
+            /* Warna teks saat hover */
+        }
+
+        button[type="button"],
+        button[type="submit"] {
+            cursor: pointer;
+            background: linear-gradient(to right, #1E90FF, #87CEEB);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        /* Warna default untuk hover */
+        button[type="button"]:hover,
+        button[type="submit"]:hover {
+            background: linear-gradient(to right, #87CEEB, #1E90FF);
+            color: #1E90FF;
+            /* Warna teks saat hover */
+        }
+
+
 
 
         /* New style for the message container */
@@ -110,40 +149,24 @@
 </head>
 
 <body>
+
     <div class="container">
         <div class="title-container">
             <img class="logo" src="assets/images/logo1.png" alt="Logo">
             <h2 style="color: #FFFFFF;">PENDAFTARAN NOMOR GUGUS DEPAN KWARCAB BULUNGAN</h2>
         </div>
 
-        <form method="post" id="form" action="login/register_action">
-            <label for="npsn">NPSN:</label>
-            <input type="text" name="npsn" id="npsn" required>
-            <input type="button" value="Cek" onclick="cekNPSN()">
+        <form method="post" id="form" action="login/login_action">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
             <br>
 
-            <label for="nama_gudep">NAMA PANGKALAN:</label>
-            <input type="text" name="nama_gudep" id="nama_gudep" readonly>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" readonly>
+            <a href="<?= site_url('login/register') ?>" class="btn btn-outline-primary float-right btn-inline">Register</a>
             <br>
 
-            <label for="kwarran">KWARTIR RANTING:</label>
-            <select name="kwarran" id="kwarran" required>
-                <option value="" disabled selected>Silahkan Pilih Kwartir Ranting</option>
-                <option value="Tanjung Selor">Tanjung Selor</option>
-                <option value="Tanjung Palas">Tanjung Palas</option>
-                <option value="Tanjung Palas Tengah">Tanjung Palas Tengah</option>
-                <option value="Tanjung Palas Timur">Tanjung Palas Timur</option>
-                <option value="Tanjung Palas Barat">Tanjung Palas Barat</option>
-                <option value="Tanjung Palas Utara">Tanjung Palas Utara</option>
-                <option value="Bunyu">Bunyu</option>
-                <option value="Peso">Peso</option>
-                <option value="Sekatak">Sekatak</option>
-                <option value="Peso Hilir">Peso Hilir</option>
-            </select>
-            <a href="<?= site_url('login') ?>" class="btn btn-outline-primary float-right btn-inline">Sudah mempunyai akun?</a>
-            <br>
-
-            <input type="submit" id="submit" name="submit" value="DAFTAR">
+            <button type="submit" id="submit" name="submit">Login</button>
         </form>
 
         <!-- Conditionally show the message or error container -->
@@ -152,43 +175,6 @@
         </div>
     </div>
 
-    <script>
-        function cekNPSN() {
-            var npsn = document.getElementById('npsn').value;
-            var xhr = new XMLHttpRequest();
-            console.log(npsn);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var response = xhr.responseText;
-                    if (response === 'NPSN TIDAK DITEMUKAN' || response === 'Data tidak valid') {
-                        showError("PANGKALAN ANDA TIDAK BERADA DI WILAYAH KWARCAB BULUNGAN");
-                    } else {
-                        clearError();
-                        document.getElementById('nama_gudep').value = response;
-                    }
-                }
-            };
-            xhr.open('GET', '<?= site_url("cek") ?>?npsn=' + npsn, true);
-            xhr.send();
-        }
-
-        // New function to show error message
-        function showError(message) {
-            var errorContainer = document.createElement('div');
-            errorContainer.className = 'error-container';
-            errorContainer.innerHTML = message;
-            document.querySelector('.container').appendChild(errorContainer);
-        }
-
-        // New function to clear error messages
-        function clearError() {
-            var errorContainers = document.querySelectorAll('.error-container');
-            errorContainers.forEach(function(container) {
-                container.remove();
-            });
-        }
-    </script>
-
     <script type="text/javascript">
         $("#form").submit(function(e) {
             e.preventDefault();
@@ -196,7 +182,7 @@
             $("#submit").prop('disabled', true).html('Loading...');
             $(".form-group").find('.text-danger').remove();
             $.ajax({
-                url: <?= url("login/register_action")?>,
+                url: <?= url('login/login_action') ?>,
                 type: 'post',
                 data: new FormData(this),
                 contentType: false,
@@ -205,11 +191,28 @@
                 processData: false,
                 success: function(json) {
                     if (json.success == true) {
-                        location.href = json.redirect;
-                        return;
+                        if (json.valid == true) {
+                            window.location.href = json.url;
+                        } else {
+                            $("#submit").prop('disabled', false)
+                                .html('LOGIN');
+                            $("input[type=password]").val("");
+                            swal({
+                                icon: 'error',
+                                title: 'Info',
+                                text: 'Username Atau Password Salah.',
+                                button: {
+                                    text: "OK",
+                                    value: true,
+                                    visible: true,
+                                    className: "btn btn-primary"
+                                }
+                            });
+                            $('input[name="token"]').val(json.token);
+                        }
                     } else {
                         $("#submit").prop('disabled', false)
-                            .html('<?= cclang("save") ?>');
+                            .html('Log In');
                         $.each(json.alert, function(key, value) {
                             var element = $('#' + key);
                             $(element)
@@ -222,7 +225,6 @@
             });
         });
     </script>
-
 </body>
 
 </html>

@@ -64,7 +64,7 @@ https://templatemo.com/tm-570-chain-app-dev
                             <li class="scroll-to-section"><a href="#services">Registrasi</a></li>
                             <li class="scroll-to-section"><a href="#about">Alur</a></li>
                             <li>
-                                <div class="gradient-button"><a id="modal_trigger" href="<?= site_url('login')?>"><i class="fa fa-sign-in-alt"></i> Registrasi</a></div>
+                                <div class="gradient-button"><a id="modal_trigger" href="<?= site_url('login')?>"><i class="fa fa-sign-in-alt"></i> Login</a></div>
                             </li>
                         </ul>
                         <a class='menu-trigger'>

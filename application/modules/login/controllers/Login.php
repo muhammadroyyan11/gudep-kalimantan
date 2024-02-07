@@ -20,7 +20,7 @@ class Login extends Signin
     }
 
     $this->_tokens();
-    $this->load->view("login-clasic");
+    $this->load->view("auth");
   }
 
   public function register()
